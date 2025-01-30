@@ -3,30 +3,21 @@ import {
   View,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
 } from "react-native";
-import colors from "../styles/colors";
 import defaultStyles from "../styles/defaultStyles";
 import { useState } from "react";
+import ListItemSeparator from "@/components/ListItemSeparator";
+import ListItem from "@/components/ListItem";
+import { dataType, DATA } from "@/data/appData";
 
 export default function Index() {
 
-  type dataType = {
-    id: string,
-    title: string,
-  }
-  const DATA: dataType[] = [
-    {id: '1', title: 'First'},
-    {id: '2', title: 'Second'},
-    {id: '3', title: 'Third'},
-    {id: '4', title: 'Fourth'},
-  ];
-  const selectedList = (item: dataType) => {
+  const [selectedId, setSelectedId] = useState<string>("1")
+
+  const handleRowPress = (item: dataType) => {
     setSelectedId(item.id);
     console.log("Clicked on " + item.title);
   }
-
-  const [selectedId, setSelectedId] = useState<string>("1")
 
   return (
     <View style={defaultStyles.container}>
@@ -38,21 +29,8 @@ export default function Index() {
           <FlatList 
             data={DATA}
             keyExtractor={(item: dataType) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => selectedList(item)}>
-                <View style={[styles.titleContainer, {
-                  backgroundColor: 
-                    item.id === selectedId 
-                      ? colors.primary 
-                      : colors.secondary
-                },
-                ]}>
-                  <Text style={[styles.titleText, {color: item.id === selectedId ? colors.text.light : colors.text.dark}]}>
-                    {item.title}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            ItemSeparatorComponent={() => (<ListItemSeparator/>)}
+            renderItem={({ item }) => (<ListItem item={item} selectedId={selectedId} onPress={handleRowPress}/>)}
           />
         </View>
       </View>
@@ -63,19 +41,5 @@ export default function Index() {
 const styles = StyleSheet.create({
   flatlist: {
     alignItems: "center",
-  },
-  titleContainer: {
-    marginTop: 5,
-    width: 300,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    backgroundColor: 'lightblue'
-  },
-  selectedContainer: {
-    backgroundColor: 'blue'
-  },
-  titleText: {
-    fontSize: 24,
-    padding: 10,
   },
 });
